@@ -147,7 +147,7 @@ module CarrierWave
     #
     def read
       if is_path?
-        File.read(@file)
+        File.open(@file, "rb").read
       else
         @file.rewind if @file.respond_to?(:rewind)
         @file.read
@@ -199,7 +199,7 @@ module CarrierWave
         File.open(new_path, "wb") { |f| f.write(read) }
       end
       chmod!(new_path, permissions)
-      self.class.new(new_path)
+      self.class.new({:tempfile => new_path, :content_type => content_type})
     end
 
     ##

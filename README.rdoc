@@ -66,7 +66,7 @@ Most of the time you are going to want to use CarrierWave together with an ORM.
 It is quite simple to mount uploaders on columns in your model, so you can
 simply assign files and get going:
 
-=== ActiveRecord, DataMapper, Sequel, MongoMapper
+=== ActiveRecord, DataMapper, Sequel, Mongoid
 
 Make sure you are loading CarrierWave after loading your ORM, otherwise you'll
 need to require the relevant extension manually, e.g.:
@@ -237,6 +237,22 @@ this easily by overriding the +default_url+ method in your uploader:
       end
     end
 
+== Recreating versions
+
+You might come to a situation where you want to retroactively change a version
+or add a new one. You can use the recreate_versions! method to recreate the
+versions from the base file. This uses a naive approach which will reupload and
+process all versions.
+
+   instance = MyUploader.new
+   instance.recreate_versions!
+
+Or on a mounted uploader:
+
+   User.all.each do |user|
+     user.avatar.recreate_versions!
+   end
+
 == Configuring CarrierWave
 
 CarrierWave has a broad range of configuration options, which you can configure,
@@ -334,7 +350,7 @@ Cloud Files support requires a {Rackspace Cloud}[http://rackspacecloud.com] user
 You must also create a container for Carrierwave to use, and mark it public (publish it to the CDN)
 
     CarrierWave.configure do |config|
-      config.cloud_files_user_name = 'xxxxxx'
+      config.cloud_files_username = 'xxxxxx'
       config.cloud_files_api_key = 'xxxxxxxxxxxxxxxxxxxxx'
       config.cloud_files_container = 'name_of_bucket'
     end
